@@ -13,6 +13,7 @@ class MahasiswaController extends Controller
 {
     public function __invoke()
     {
+
     }
 
     public function checkTokenValid(Request $request)
@@ -33,7 +34,7 @@ class MahasiswaController extends Controller
                                 ->where('mahasiswas.nim', '=', $nomor_induk)
                                 ->where('jadwals.id_jdwl', '=', $Jadwal->id_jdwl)
                                 ->where('presensis.tgl', '=', date('Y-m-d'))
-                                ->select('mahasiswas.id_mhs', 'jadwals.jumlah_jam')->get();
+                                ->select('mahasiswas.id_mhs','mahasiswas.nama', 'jadwals.jumlah_jam')->get();
                             foreach ($presensiToUpdate as $key => $value) {
                                 DB::table('presensis')
                                     ->join('mahasiswas', 'presensis.id_mhs', '=', 'mahasiswas.id_mhs')

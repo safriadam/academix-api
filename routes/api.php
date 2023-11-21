@@ -38,11 +38,11 @@ Route::get("/Dashboard-Admin", AdminController::class);
 
 //Dosen / Kaprodi
 Route::get("/Dashboard-Dosen", DosenController::class);
-Route::post("/Dosen-Kelas", [DosenController::class, "generateTokenKelas"]);
+// Route::post("/Dosen-Kelas/{nidn}/{id_jdwl}", [DosenController::class, "generateTokenKelas"]);
 
 //Mahasiswa
 Route::get("/Dashboard-Mahasiswa", MahasiswaController::class);
-Route::post("/validasi-token-kelas", [MahasiswaController::class, "checkTokenValid"]);
+Route::post("/validasi-token-kelas/{id_jdwl}/{token}/{nomor_induk}", [MahasiswaController::class, "checkTokenValid"]);
 
 //Kelas
-Route::get("/Kelas-Dosen",[KelasController::class,'kelasSaatIni']);
+Route::get("/Kelas-Dosen/{nidn}/{id_jdwl}",[KelasController::class,'kelasSaatIni']);
