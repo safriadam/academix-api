@@ -18,8 +18,8 @@ return new class extends Migration
             $table->date('tgl');
             $table->time('start_kls');
             $table->time('finish_kls')->nullable();
-            $table->char('kehadiran');
-            $table->char('ketidakhadiran');
+            $table->integer('kehadiran')->nullable();
+            $table->integer('ketidakhadiran');
             $table->enum('status', ['A','I','S'])->nullable();
             $table->timestamps();
         });

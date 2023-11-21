@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ket_mhs', function (Blueprint $table) {
-            $table->bigIncrements('id_presensi');
-            $table->boolean('status_confirm');
-            $table->string('surat_bukti');
-            $table->string('deskripsi');
+        Schema::create('kompen_mhs', function (Blueprint $table) {
+            $table->unsignedBigInteger('id_mhs');
+            $table->unsignedBigInteger('id_staff');
+            $table->integer('jumlah_kompen');
+            $table->string('keterangan');
+            $table->date('tgl_kompen');
             $table->timestamps();
         });
     }
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ket_mhs');
+        Schema::dropIfExists('kompen_mhs');
     }
 };

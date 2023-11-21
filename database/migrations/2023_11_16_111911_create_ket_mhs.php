@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('kompen_mhs', function (Blueprint $table) {
-            $table->unsignedBigInteger('id_mhs');
-            $table->unsignedBigInteger('id_staff');
-            $table->integer('jumlah_kompen');
-            $table->string('bukti');
+        Schema::create('ket_mhs', function (Blueprint $table) {
+            $table->bigIncrements('id_presensi');
+            $table->boolean('status_confirm');
+            $table->string('surat_bukti');
+            $table->string('deskripsi');
+            $table->string('limit_surat');
             $table->timestamps();
         });
     }
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('kompen_mhs');
+        Schema::dropIfExists('ket_mhs');
     }
 };

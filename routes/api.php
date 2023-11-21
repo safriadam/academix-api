@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\API\AdminController;
 use App\Http\Controllers\API\DosenController;
+use App\Http\Controllers\API\JadwalController;
 use App\Http\Controllers\API\MahasiswaController;
 use App\Http\Controllers\API\KelasController;
 use App\Http\Controllers\Api\LoginController;
@@ -37,12 +38,21 @@ Route::post("/logout", LogoutController::class)->name("logout");
 Route::get("/Dashboard-Admin", AdminController::class);
 
 //Dosen / Kaprodi
-Route::get("/Dashboard-Dosen", DosenController::class);
-// Route::post("/Dosen-Kelas/{nidn}/{id_jdwl}", [DosenController::class, "generateTokenKelas"]);
+Route::get("/Dashboard-Dosen-Profil", [DosenController::class, 'profilDosen']);
+Route::get("/Dashboard-Dosen-Jadwal-Hari-Ini", [DosenController::class, 'jadwalHariIniDosen']);
+Route::get("/Dashboard-Dosen-Konfirm-Mahasiswa", [DosenController::class, 'konfirmMahasiswa']);
+Route::get('/Dashboard-Tolak-Surat', [DosenController::class, 'tolakSurat']);
+Route::get("/Kelas-Data", [KelasController::class, 'dataKelasDosen']);
+Route::get("/Kelas-Generate-Token-Kelas", [KelasController::class, 'generateTokenKelas']);
+Route::get("/Kelas-Tabel-kelas-Dosen", [KelasController::class, 'kelasSaatIniDosen']);
+Route::get("/Kelas-Edit-Kehadiran-Mahasiswa", [KelasController::class, 'editKehadiranMhs']); 
+Route::get("/Kelas-Tutup-Kelas", [KelasController::class, 'tutupKelas']);
 
 //Mahasiswa
-Route::get("/Dashboard-Mahasiswa", MahasiswaController::class);
-Route::post("/validasi-token-kelas/{id_jdwl}/{token}/{nomor_induk}", [MahasiswaController::class, "checkTokenValid"]);
-
-//Kelas
-Route::get("/Kelas-Dosen/{nidn}/{id_jdwl}",[KelasController::class,'kelasSaatIni']);
+// Route::get("/Dashboard-Mahasiswa", MahasiswaController::class);
+Route::get("/Dashboard-Mahasiswa-Konfirmasi-Kehadiran-Anda", [MahasiswaController::class, 'daftarKetidakhadiranMhs']);
+Route::get("/Dashboard-Kirim-Surat", [MahasiswaController::class, 'kirimSuratKetidakhadiran']);
+Route::post("/Kelas-Validasi-Token", [MahasiswaController::class, 'checkTokenValid']);
+Route::get("/Kelas-Mahasiswa", [KelasController::class, 'kelasSaatIniMahasiswa']);
+//Jadwal
+// Route::get("",[JadwalController::class,'']);

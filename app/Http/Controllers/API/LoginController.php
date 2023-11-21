@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
@@ -31,18 +32,16 @@ class LoginController extends Controller
             $user = User::where("nomor_induk", $request->nomor_induk)->first();
             if (!$user) {
                 return response()->json([
-                    "status" => 401,
-                    "message" => "Nomor induk tidak ditemukan"
+                    'status' => 401,
+                    'message' => "Nomor induk tidak ditemukan"
                 ], 401);
             }
             $password = $request->password;
-
             $credentials = $request->only('nomor_induk', 'password');
             if (!$token = auth()->guard('api')->attempt($credentials)) {
                 if (!$user->password = Hash::check($password, $user->password)) {
                     return response()->json([
-                        "status" => 401,
-                        "message" => "Password anda salah"
+                        'message' => "Password anda salah"
                     ], 401);
                 }
             } else {

@@ -103,17 +103,6 @@ class RegisterController extends Controller
                 'mahasiswa' => $mahasiswa,
             ], 201);
         }
-
-        //return response JSON user is created
-        // if ($user) {
-        //     return response()->json([
-        //         'status' => '201',
-        //         'success' => true,
-        //         'user'    => $user,
-        //         'mahasiswa' => $mahasiswa,
-        //     ], 201);
-        // }
-
         //return JSON process insert failed 
         return response()->json([
             'status' => '409',
