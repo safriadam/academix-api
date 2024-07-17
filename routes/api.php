@@ -1,13 +1,14 @@
 <?php
 
+use App\Http\Controllers\Api\LoginController;
+use App\Http\Controllers\Api\LogoutController;
+use App\Http\Controllers\Api\RegisterController;
 use App\Http\Controllers\API\AdminController;
 use App\Http\Controllers\API\DosenController;
 use App\Http\Controllers\API\JadwalController;
 use App\Http\Controllers\API\MahasiswaController;
 use App\Http\Controllers\API\KelasController;
-use App\Http\Controllers\Api\LoginController;
-use App\Http\Controllers\Api\LogoutController;
-use App\Http\Controllers\Api\RegisterController;
+use App\Http\Controllers\API\PresensiController;
 use App\Models\Dosen;
 use App\Models\Mahasiswa;
 use Illuminate\Http\Request;
@@ -45,8 +46,9 @@ Route::get('/Dashboard-Tolak-Surat', [DosenController::class, 'tolakSurat']);
 Route::get("/Kelas-Data", [KelasController::class, 'dataKelasDosen']);
 Route::get("/Kelas-Generate-Token-Kelas", [KelasController::class, 'generateTokenKelas']);
 Route::get("/Kelas-Tabel-kelas-Dosen", [KelasController::class, 'kelasSaatIniDosen']);
-Route::get("/Kelas-Edit-Kehadiran-Mahasiswa", [KelasController::class, 'editKehadiranMhs']); 
+Route::get("/Kelas-Edit-Kehadiran-Mahasiswa", [KelasController::class, 'editKehadiranMhs']);
 Route::get("/Kelas-Tutup-Kelas", [KelasController::class, 'tutupKelas']);
+Route::get("/Presensi-Dosen-Perminggu", [PresensiController::class, 'rekapPermingguDosen']);
 
 //Mahasiswa
 // Route::get("/Dashboard-Mahasiswa", MahasiswaController::class);
@@ -55,4 +57,4 @@ Route::get("/Dashboard-Kirim-Surat", [MahasiswaController::class, 'kirimSuratKet
 Route::post("/Kelas-Validasi-Token", [MahasiswaController::class, 'checkTokenValid']);
 Route::get("/Kelas-Mahasiswa", [KelasController::class, 'kelasSaatIniMahasiswa']);
 //Jadwal
-// Route::get("",[JadwalController::class,'']);
+Route::get("/Dashboard-Mahasiswa-Jadwal-Harini", [MahasiswaController::class, 'jadwalHariIniMhs']);

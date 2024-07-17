@@ -98,44 +98,68 @@ class KelasController extends Controller
     {
         $id_jdwl = $request->query('id_jdwl');
         $nidn = $request->query('nomor_induk');
-        try {
-            $date = Carbon::parse(now())->locale('id');
-            $date->settings(['formatFunction' => 'translatedFormat']);
-            $day = $date->format('l');
+        // try {
+        $date = Carbon::parse(now())->locale('id');
+        $date->settings(['formatFunction' => 'translatedFormat']);
+        $day = $date->format('l');
 
-            $kelasSaatIni = DB::table('jadwals')
+        // $tableKelas = [];
+        $kelasSaatIni = DB::table('jadwals')
+            ->join('logs', 'jadwals.id_jdwl', '=', 'logs.id_jdwl')
+            ->join('dosens', 'logs.id_dosen', '=', 'dosens.id_dosen')
+            ->join('matkuls', 'jadwals.id_mk', '=', 'matkuls.id_mk')
+            ->join('kelas', 'jadwals.id_kls', '=', 'kelas.id_kls')
+            ->where('jadwals.hari', '=', $day)
+            ->where('jadwals.id_jdwl', '=', $id_jdwl)
+            ->whereRaw('jadwals.finish > curtime() ')
+            ->where('dosens.nidn', '=', $nidn)
+            ->select(
+                'logs.id_tahun_ajar',
+                'dosens.foto',
+                'dosens.nama',
+                'matkuls.nama as Mata Kuliah',
+                DB::raw(
+                    'DATE_FORMAT(CURDATE(), "%e %M %Y") AS Tanggal 
+                        ,CONCAT(TIME_FORMAT(jadwals.start, "%H.%i"), " - ",TIME_FORMAT(jadwals.finish   , "%H.%i")) AS Waktu'
+                ),
+                'kelas.smt',
+                'kelas.abjad_kls',
+                'jadwals.jumlah_jam'
+            )->get();
+        if (!$kelasSaatIni->isEmpty()) {
+            $datamahasiswa = DB::table('mahasiswas')
+                ->join('kelas', 'mahasiswas.id_kls', '=', 'kelas.id_kls')
+                ->join('jadwals', 'kelas.id_kls', '=', 'jadwals.id_kls')
                 ->join('logs', 'jadwals.id_jdwl', '=', 'logs.id_jdwl')
                 ->join('dosens', 'logs.id_dosen', '=', 'dosens.id_dosen')
-                ->join('matkuls', 'jadwals.id_mk', '=', 'matkuls.id_mk')
-                ->join('kelas', 'jadwals.id_kls', '=', 'kelas.id_kls')
-                ->where('jadwals.hari', '=', $day)
                 ->where('jadwals.id_jdwl', '=', $id_jdwl)
-                ->whereRaw('jadwals.finish > curtime() ')
                 ->where('dosens.nidn', '=', $nidn)
-                ->select(
-                    'logs.id_tahun_ajar',
-                    'dosens.foto',
-                    'dosens.nama',
-                    'matkuls.nama as Mata Kuliah',
-                    DB::raw(
-                        'DATE_FORMAT(CURDATE(), "%e %M %Y") AS Tanggal 
-                        ,CONCAT(TIME_FORMAT(jadwals.start, "%H.%i"), " - ",TIME_FORMAT(jadwals.finish   , "%H.%i")) AS Waktu'
-                    ),
-                    'kelas.smt',
-                    'kelas.abjad_kls',
-                    'jadwals.jumlah_jam'
-                )->get();
-            if (!$kelasSaatIni->isEmpty()) {
-                $datamahasiswa = DB::table('mahasiswas')
-                    ->join('kelas', 'mahasiswas.id_kls', '=', 'kelas.id_kls')
-                    ->join('jadwals', 'kelas.id_kls', '=', 'jadwals.id_kls')
-                    ->join('logs', 'jadwals.id_jdwl', '=', 'logs.id_jdwl')
-                    ->join('dosens', 'logs.id_dosen', '=', 'dosens.id_dosen')
-                    ->where('jadwals.id_jdwl', '=', $id_jdwl)
-                    ->where('dosens.nidn', '=', $nidn)
-                    ->select('mahasiswas.id_mhs', 'jadwals.jumlah_jam')
-                    ->get();
-                // dd($datamahasiswa[3]);
+                ->select('mahasiswas.id_mhs', 'jadwals.jumlah_jam')
+                ->get();
+            // dd($datamahasiswa[3]);
+            $tableKelas = DB::table('presensis')
+                ->join('mahasiswas', 'presensis.id_mhs', '=', 'mahasiswas.id_mhs')
+                ->join('kelas', 'mahasiswas.id_kls', '=', 'kelas.id_kls')
+                ->join('jadwals', 'kelas.id_kls', '=', 'jadwals.id_kls')
+                ->where('presensis.id_tahun_ajar', '=', $id_jdwl)
+                ->where('presensis.tgl', '=', date('Y-m-d'))
+                ->select(DB::raw('distinct presensis.*'))->get();
+            if ($tableKelas->isEmpty()) {
+                foreach ($datamahasiswa as $key => $value) {
+                    DB::table('presensis')
+                        ->insert([
+                            'id_mhs' => $value->id_mhs,
+                            'id_tahun_ajar' => $id_jdwl,
+                            'tgl' => date('Y-m-d'),
+                            'start_kls' => date('H:i:s'),
+                            'finish_kls' => null,
+                            'kehadiran' => null,
+                            'ketidakhadiran' => $value->jumlah_jam,
+                            'status' => 'A',
+                            'created_at' => now(),
+                            'updated_at' => now()
+                        ]);
+                }
                 $tableKelas = DB::table('presensis')
                     ->join('mahasiswas', 'presensis.id_mhs', '=', 'mahasiswas.id_mhs')
                     ->join('kelas', 'mahasiswas.id_kls', '=', 'kelas.id_kls')
@@ -143,41 +167,115 @@ class KelasController extends Controller
                     ->where('presensis.id_tahun_ajar', '=', $id_jdwl)
                     ->where('presensis.tgl', '=', date('Y-m-d'))
                     ->select(DB::raw('distinct presensis.*'))->get();
-
-                if ($tableKelas) {
-                    foreach ($datamahasiswa as $key => $value) {
-                        DB::table('presensis')
-                            ->insert([
-                                'id_mhs' => $value->id_mhs,
-                                'id_tahun_ajar' => $id_jdwl,
-                                'tgl' => date('Y-m-d'),
-                                'start_kls' => date('H:i:s'),
-                                'finish_kls' => null,
-                                'kehadiran' => null,
-                                'ketidakhadiran' => $value->jumlah_jam,
-                                'status' => 'A',
-                                'created_at' => now(),
-                                'updated_at' => now()
-                            ]);
-                    }
-                }
                 return response()->json([
                     'status' => 200,
                     'kelasSaatIni' => $kelasSaatIni,
                     'datamahasiswa' => $tableKelas
                 ], 200);
             } else {
+                $tableKelas = DB::table('presensis')
+                    ->join('mahasiswas', 'presensis.id_mhs', '=', 'mahasiswas.id_mhs')
+                    ->join('kelas', 'mahasiswas.id_kls', '=', 'kelas.id_kls')
+                    ->join('jadwals', 'kelas.id_kls', '=', 'jadwals.id_kls')
+                    ->where('presensis.id_tahun_ajar', '=', $id_jdwl)
+                    ->where('presensis.tgl', '=', date('Y-m-d'))
+                    ->select(DB::raw('distinct presensis.*'))->get();
                 return response()->json([
-                    'status' => 400,
-                    'kelasSaatIni' => [
-                        'message' => 'kelas kosong'
-                    ]
-                ], 400);
+                    'status' => 200,
+                    'kelasSaatIni' => $kelasSaatIni,
+                    'datamahasiswa' => $tableKelas
+                ], 200);
+            }
+        } else {
+            return response()->json([
+                'status' => 400,
+                'kelas' => 'Kelas Hari ini kosong'
+            ], 400);
+        }
+    }
+    // public function getjmlhJam(Request $request)
+    // {
+    //     $ktngPrsn = $request->query('Keterangan_presensi');
+    //     $sts = $request->query('status');
+    //     $jmlh = $request->query('jumlah_jam');
+    //     $nim = $request->query('nomor_induk');
+    //     $id_jdwl = $request->query('id_jdwl');
+    //     //get Row mhs tersebut
+    //     $jmljammax = DB::table('presensis')
+    //         ->join('mahasiswas', 'presensis.id_mhs', '=', 'mahasiswas.id_mhs')
+    //         ->where('mahasiswas.nim', '=', $nim)
+    //         ->where('presensis.id_tahun_ajar', '=', $id_jdwl)
+    //         ->where('presensis.tgl', '=', date('Y-m-d'))->first();
+    //     // ->where('presensis.id_tahun_ajar', '=', 9)
+    //     // ->where('mahasiswas.nim', '=', '3202116025')
+    //     // ->where('presensis.tgl', '=', '2023-10-27')->get();
+    // }
+    public function editKehadiranMhs(Request $request)
+    {
+        $ktngPrsn = $request->query('Keterangan_presensi');
+        $sts = $request->query('status');
+        $jmlh = $request->query('jumlah_jam');
+        $nim = $request->query('nomor_induk');
+        $id_jdwl = $request->query('id_jdwl');
+        try {
+            // Fetching the student record based on provided filters
+            $getIdMhs = DB::table('presensis')
+                ->join('mahasiswas', 'presensis.id_mhs', '=', 'mahasiswas.id_mhs')
+                // ->where('presensis.id_tahun_ajar', '=', 9)
+                // ->where('mahasiswas.nim', '=', '3202116025')
+                // ->where('presensis.tgl', '=', '2023-10-27')
+                ->where('mahasiswas.nim', '=', $nim)
+                ->where('presensis.id_tahun_ajar', '=', $id_jdwl)
+                ->where('presensis.tgl', '=', date('Y-m-d'))->first()
+                ->first(); // Using first() instead of get() to fetch a single record
+
+            if ($getIdMhs) {
+                $updateData = [
+                    'presensis.kehadiran' => ($ktngPrsn === 'Masuk') ? ($getIdMhs->ketidakhadiran - $jmlh) : ($getIdMhs->kehadiran - $jmlh),
+                    'presensis.ketidakhadiran' => $jmlh
+                ];
+
+                // Mapping status values to their respective codes
+                $statusCodes = [
+                    'Alpa' => 'A',
+                    'Izin' => 'I',
+                    'Sakit' => 'S'
+                ];
+
+                if (array_key_exists($sts, $statusCodes)) {
+                    $updateData['presensis.status'] = $statusCodes[$sts];
+                }
+
+                // Update the attendance record based on conditions
+                $updateMhs = DB::table('presensis')
+                    ->where('presensis.id_presensi', '=', $getIdMhs->id_presensi)
+                    ->update($updateData);
+
+                $limitSurat = now()->addDays(2);
+                $ket_mhs = DB::table('ket_mhs')
+                    ->where('presensis.id_presensi', '=', $getIdMhs->id_presensi)
+                    ->insert([
+                        'id_presensi' => $getIdMhs->id_presensi,
+                        'status_confirm' => 0,
+                        'surat_bukti' => null,
+                        'deskripsi' => null,
+                        'limit_surat' => $limitSurat
+                    ]);
+                return response()->json([
+                    'status' => 200,
+                    'getid' => $getIdMhs,
+                    'updated' => $updateMhs,
+                    'ket_mhs' => $ket_mhs
+                ], 200);
+            } else {
+                return response()->json([
+                    'data' => "data kosong"
+                ]);
             }
         } catch (\Throwable $th) {
             return response()->json([
                 "error" => $th->getMessage()
-            ], $th->getCode());
+            ], 400);
         }
     }
     public function tutupKelas(Request $request)
@@ -193,6 +291,7 @@ class KelasController extends Controller
         //get id dosen
         $id_dosen = DB::table('dosens')->where('dosens.nidn', '=', $nidn)->value('id_dosen');
         //get jumlah_jam_ajar
+        // if semester ganjil 
         $jam_ajar = DB::table('presensis')
             ->selectRaw("
             CASE
@@ -213,6 +312,30 @@ class KelasController extends Controller
                     END
                 ELSE finish_kls
             END AS jam_ajar")
+            //if semester genap
+            //     Start_kls, finish_kls,
+            //     CASE
+            //         WHEN finish_kls > '12:40:00' THEN
+            //             CASE
+            //                 WHEN start_kls < '09:30:00' THEN TIMESTAMPADD(MINUTE, -90, TIMEDIFF(finish_kls, start_kls))
+            //                 WHEN start_kls < '11:40:00' THEN TIMESTAMPADD(MINUTE, -30, TIMEDIFF(finish_kls, start_kls))
+            //             END
+            //         WHEN finish_kls > '10:00:00' THEN
+            //             CASE
+            //                 WHEN start_kls < '09:30:00' THEN TIMESTAMPADD(MINUTE, -30, TIMEDIFF(finish_kls, start_kls))
+            //             END
+            //         ELSE finish_kls
+            //         END AS jam_ajar
+            // FROM 
+            // tb_presensi,log,tb_jdwl
+            // WHERE 
+            // tb_presensi.id_tahun_ajar=log.id_tahun_ajar
+            // AND 
+            // tb_jdwl.id_jdwl=log.id_jdwl 
+            // AND 
+            // tb_jdwl.id_jdwl=1 
+            // AND log.id_dosen=23 
+            // AND tgl = CURDATE();
             ->join('logs', 'presensis.id_tahun_ajar', '=', 'logs.id_tahun_ajar')
             ->join('jadwals', 'jadwals.id_jdwl', '=', 'logs.id_jdwl')
             ->where('jadwals.id_jdwl', '=', '11')
@@ -252,94 +375,10 @@ class KelasController extends Controller
             'datakelas' => $simpanDataKelas
         ], 200);
     }
-    // public function getjmlhJam(Request $request)
-    // {
-    //     $ktngPrsn = $request->query('Keterangan_presensi');
-    //     $sts = $request->query('status');
-    //     $jmlh = $request->query('jumlah_jam');
-    //     $nim = $request->query('nomor_induk');
-    //     $id_jdwl = $request->query('id_jdwl');
-    //     //get Row mhs tersebut
-    //     $jmljammax = DB::table('presensis')
-    //         ->join('mahasiswas', 'presensis.id_mhs', '=', 'mahasiswas.id_mhs')
-    //         ->where('mahasiswas.nim', '=', $nim)
-    //         ->where('presensis.id_tahun_ajar', '=', $id_jdwl)
-    //         ->where('presensis.tgl', '=', date('Y-m-d'))->first();
-    //     // ->where('presensis.id_tahun_ajar', '=', 9)
-    //     // ->where('mahasiswas.nim', '=', '3202116025')
-    //     // ->where('presensis.tgl', '=', '2023-10-27')->get();
-    // }
-    public function editKehadiranMhs(Request $request)
-    {
-        $ktngPrsn = $request->query('Keterangan_presensi');
-        $sts = $request->query('status');
-        $jmlh = $request->query('jumlah_jam');
-        $nim = $request->query('nomor_induk');
-        $id_jdwl = $request->query('id_jdwl');
-        try {
-            // Fetching the student record based on provided filters
-            $getIdMhs = DB::table('presensis')
-                ->join('mahasiswas', 'presensis.id_mhs', '=', 'mahasiswas.id_mhs')
-                ->where('presensis.id_tahun_ajar', '=', 9)
-                ->where('mahasiswas.nim', '=', '3202116025')
-                ->where('presensis.tgl', '=', '2023-10-27')
-                // ->where('mahasiswas.nim', '=', $nim)
-                // ->where('presensis.id_tahun_ajar', '=', $id_jdwl)
-                // ->where('presensis.tgl', '=', date('Y-m-d'))->first()
-                ->first(); // Using first() instead of get() to fetch a single record
-
-            if ($getIdMhs) {
-                $updateData = [
-                    'presensis.kehadiran' => ($ktngPrsn === 'Masuk') ? ($getIdMhs->ketidakhadiran - $jmlh) : ($getIdMhs->kehadiran - $jmlh),
-                    'presensis.ketidakhadiran' => $jmlh
-                ];
-
-                // Mapping status values to their respective codes
-                $statusCodes = [
-                    'Alpa' => 'A',
-                    'Izin' => 'I',
-                    'Sakit' => 'S'
-                ];
-
-                if (array_key_exists($sts, $statusCodes)) {
-                    $updateData['presensis.status'] = $statusCodes[$sts];
-                }
-
-                // Update the attendance record based on conditions
-                $updateMhs = DB::table('presensis')
-                    ->where('presensis.id_presensi', '=', $getIdMhs->id_presensi)
-                    ->update($updateData);
-
-                return response()->json([
-                    'status' => 200,
-                    'getid' => $getIdMhs,
-                    'updated' => $updateMhs
-                ], 200);
-            } else {
-                return response()->json([
-                    'data' => "data kosong"
-                ]);
-            }
-        } catch (\Throwable $th) {
-            return response()->json([
-                "error" => $th->getMessage()
-            ], 400);
-        }
-    }
-
     //---------------------------------------------------------------------------MAHASISWA//////////////////////////////////////////////////////////////////////////
     public function kelasSaatIniMahasiswa(Request $request)
     {
         $id_jdwl = $request->query('id_jdwl');
-        // if (!$kelasSaatIni->isEmpty()) {
-        // } else {
-        //     return response()->json([
-        //         'status' => '400',
-        //         'kelasSaatIni' => [
-        //             'message' => 'kelas kosong'
-        //         ]
-        //     ]);
-        // }
         $tableKelas = DB::table('presensis')
             ->join('mahasiswas', 'presensis.id_mhs', '=', 'mahasiswas.id_mhs')
             ->join('kelas', 'mahasiswas.id_kls', '=', 'kelas.id_kls')
@@ -355,46 +394,79 @@ class KelasController extends Controller
             ]
         ], 200);
     }
-
-    public function dataKelasSaatIni(Request $request)
+    public function checkTokenValid(Request $request)
     {
-        $id_jdwl = $request->query('id_jdwl');
-        $nim = $request->query('nim');
+        $nomor_induk = $request->query('nomor_induk');
+        $Jadwal = Jadwal::where("id_jdwl", $request->id_jdwl)->first();
+        $inputToken = Jadwal::where("token", $request->token)->first();
+        if ($Jadwal !== null) {
+            if ($inputToken !== null) {
+                try {
+                    if ($Jadwal->token == $inputToken->token) {
+                        if (now()->lt($inputToken->expires_at)) {
+                            // Update Presensi records for the given id_mhs
+                            $presensiToUpdate = DB::table('presensis')
+                                ->join('mahasiswas', 'presensis.id_mhs', '=', 'mahasiswas.id_mhs')
+                                ->join('kelas', 'mahasiswas.id_kls', '=', 'kelas.id_kls')
+                                ->join('jadwals', 'kelas.id_kls', '=', 'jadwals.id_kls')
+                                ->where('mahasiswas.nim', '=', $nomor_induk)
+                                ->where('jadwals.id_jdwl', '=', $Jadwal->id_jdwl)
+                                ->where('presensis.tgl', '=', date('Y-m-d'))
+                                ->select('mahasiswas.id_mhs', 'mahasiswas.nama', 'jadwals.jumlah_jam')->get();
+                            foreach ($presensiToUpdate as $key => $value) {
+                                DB::table('presensis')
+                                    ->join('mahasiswas', 'presensis.id_mhs', '=', 'mahasiswas.id_mhs')
+                                    ->join('kelas', 'mahasiswas.id_kls', '=', 'kelas.id_kls')
+                                    ->join('jadwals', 'kelas.id_kls', '=', 'jadwals.id_kls')
+                                    ->where('mahasiswas.nim', '=', $nomor_induk)
+                                    ->where('jadwals.id_jdwl', '=', $Jadwal->id_jdwl)
+                                    ->where('presensis.tgl', '=', date('Y-m-d'))
+                                    ->update([
+                                        'kehadiran' => $value->jumlah_jam,
+                                        'ketidakhadiran' => 0,
+                                        'status' => null
+                                    ]);
+                            }
 
-        $date = Carbon::parse(now())->locale('id');
-        $date->settings(['formatFunction' => 'translatedFormat']);
-        $day = $date->format('l');
-
-        $kelasSaatIni = DB::table('jadwals')
-            ->join('logs', 'jadwals.id_jdwl', '=', 'logs.id_jdwl')
-            ->join('dosens', 'logs.id_dosen', '=', 'dosens.id_dosen')
-            ->join('matkuls', 'jadwals.id_mk', '=', 'matkuls.id_mk')
-            ->join('kelas', 'jadwals.id_kls', '=', 'kelas.id_kls')
-            ->join('mahasiswas', 'kelas.id_kls', '=', 'mahasiswas.id_kls')
-            ->where('jadwals.hari', '=', $day)
-            ->where('jadwals.id_jdwl', '=', $id_jdwl)
-            ->whereRaw('jadwals.finish > curtime()')
-            ->where('mahasiswas.nim', '=', $nim)
-            ->select(
-                'logs.id_tahun_ajar',
-                'dosens.foto',
-                'dosens.nama',
-                'matkuls.nama as Mata Kuliah',
-                DB::raw(
-                    'DATE_FORMAT(CURDATE(), "%e %M %Y") AS Tanggal 
-                    ,CONCAT(TIME_FORMAT(jadwals.start, "%H.%i"), " - ",TIME_FORMAT(jadwals.finish   , "%H.%i")) AS Waktu'
-                ),
-                'kelas.smt',
-                'kelas.abjad_kls',
-                'jadwals.jumlah_jam'
-            )->get();
-
-        return response()->json([
-            'status' => 200,
-            'dataKelasMhs' => $kelasSaatIni
-        ], 200);
+                            return response()->json([
+                                "status" => "202",
+                                "token input" => $inputToken->token,
+                                "message" => "Kehadiran berhasil disimpan",
+                                "mahasiswas" => $presensiToUpdate
+                            ], 202);
+                        } else {
+                            return response()->json([
+                                "status" => "400",
+                                "token input" => $inputToken->token,
+                                "message" => "Token expired"
+                            ], 408);
+                        }
+                    } else {
+                        return response()->json([
+                            "status" => "400",
+                            "token input" => $inputToken->token,
+                            "message" => "Token invalid, Silahkan hubungi dosen atau staff"
+                        ], 408);
+                    }
+                } catch (\Throwable $th) {
+                    return response()->json([
+                        "status" => "500",
+                        "message" => "Error: " . $th->getMessage(),
+                    ], 500);
+                }
+            } else {
+                return response()->json([
+                    "status" => "400",
+                    "message" => "Input token not found or invalid",
+                ], 400);
+            }
+        } else {
+            return response()->json([
+                "status" => "404",
+                "message" => "Jadwal not found",
+            ], 404);
+        }
     }
-
     public function updateTablePresensi()
     {
     }

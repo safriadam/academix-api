@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('ket_mhs', function (Blueprint $table) {
-            $table->bigIncrements('id_presensi');
+            $table->bigInteger('id_presensi');
             $table->boolean('status_confirm');
-            $table->string('surat_bukti');
-            $table->string('deskripsi');
+            $table->string('surat_bukti')->nullable();
+            $table->string('deskripsi')->nullable();
             $table->string('limit_surat');
             $table->timestamps();
         });
