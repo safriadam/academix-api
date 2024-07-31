@@ -146,6 +146,7 @@ class MahasiswaController extends Controller
     }
     public function jadwalHariIniMhs(Request $request)
     {
+        
         $nim = $request->nomor_induk;
         try {
             $date = Carbon::parse(now())->locale('id');

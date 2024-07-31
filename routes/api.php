@@ -9,6 +9,7 @@ use App\Http\Controllers\API\JadwalController;
 use App\Http\Controllers\API\MahasiswaController;
 use App\Http\Controllers\API\KelasController;
 use App\Http\Controllers\API\PresensiController;
+use App\Http\Controllers\API\KaldikController;
 use App\Models\Dosen;
 use App\Models\Mahasiswa;
 use Illuminate\Http\Request;
@@ -51,10 +52,13 @@ Route::get("/Kelas-Tutup-Kelas", [KelasController::class, 'tutupKelas']);
 Route::get("/Presensi-Dosen-Perminggu", [PresensiController::class, 'rekapPermingguDosen']);
 
 //Mahasiswa
-// Route::get("/Dashboard-Mahasiswa", MahasiswaController::class);
+Route::get("/Dashboard-Mahasiswa", [MahasiswaController::class,'profilMahasiswa']);
 Route::get("/Dashboard-Mahasiswa-Konfirmasi-Kehadiran-Anda", [MahasiswaController::class, 'daftarKetidakhadiranMhs']);
 Route::get("/Dashboard-Kirim-Surat", [MahasiswaController::class, 'kirimSuratKetidakhadiran']);
 Route::post("/Kelas-Validasi-Token", [MahasiswaController::class, 'checkTokenValid']);
 Route::get("/Kelas-Mahasiswa", [KelasController::class, 'kelasSaatIniMahasiswa']);
 //Jadwal
 Route::get("/Dashboard-Mahasiswa-Jadwal-Harini", [MahasiswaController::class, 'jadwalHariIniMhs']);
+
+//Kaldik
+Route::get("/Dashboard-Kaldik", [KaldikController::class, 'dashboardKaldik']);
