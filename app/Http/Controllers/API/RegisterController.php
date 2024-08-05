@@ -25,6 +25,7 @@ class RegisterController extends Controller
             'role' => 'required',
             'name'      => 'required',
             'nomor_induk' => 'required',
+            'email' => 'required',
             'password'  => 'required|min:8|confirmed'
         ]);
 
@@ -42,12 +43,14 @@ class RegisterController extends Controller
             $user = User::create([
                 'role' => $request->role,
                 'name'      => $request->name,
+                'email'      => $request->email,
                 'nomor_induk'     => $request->nomor_induk,
                 'password'  => bcrypt($request->password)
             ]);
             $admin = Admin::create([
                 'user_id' => $user->id,
                 'nama' => $request->name,
+                'email'      => $request->email,
                 'no_induk' => $request->nomor_induk,
                 'no_hp' => $request->no_hp,
             ]);
@@ -61,6 +64,7 @@ class RegisterController extends Controller
             $user = User::create([
                 'role' => $request->role,
                 'name'      => $request->name,
+                'email'      => $request->email,
                 'nomor_induk'     => $request->nomor_induk,
                 'password'  => bcrypt($request->password)
             ]);
@@ -83,6 +87,7 @@ class RegisterController extends Controller
             $user = User::create([
                 'role' => $request->role,
                 'name'      => $request->name,
+                'email'      => $request->email,
                 'nomor_induk'     => $request->nomor_induk,
                 'password'  => bcrypt($request->password)
             ]);

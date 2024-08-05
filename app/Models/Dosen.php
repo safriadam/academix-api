@@ -16,7 +16,7 @@ class Dosen extends Model
     public $timestamps = false;
 
     // menghubungkan nama tabel dengan model
-    protected $table = 'dosen';
+    protected $table = 'dosens';
 
     // menentukan primary key pada kolom tabel
     protected $primaryKey = 'id_dosen';

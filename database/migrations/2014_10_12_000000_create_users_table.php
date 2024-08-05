@@ -16,6 +16,7 @@ return new class extends Migration
             $table->integer('role');
             $table->string('name');
             $table->string('nomor_induk');
+            $table->string('email')->nullable();;
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

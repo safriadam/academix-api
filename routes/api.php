@@ -10,6 +10,7 @@ use App\Http\Controllers\API\MahasiswaController;
 use App\Http\Controllers\API\KelasController;
 use App\Http\Controllers\API\PresensiController;
 use App\Http\Controllers\API\KaldikController;
+use App\Http\Controllers\API\SpController;
 use App\Models\Dosen;
 use App\Models\Mahasiswa;
 use Illuminate\Http\Request;
@@ -62,3 +63,6 @@ Route::get("/Dashboard-Mahasiswa-Jadwal-Harini", [MahasiswaController::class, 'j
 
 //Kaldik
 Route::get("/Dashboard-Kaldik", [KaldikController::class, 'dashboardKaldik']);
+
+//Surat Peringatan
+Route::get('/Dashboard-sp',[SpController::class, 'Dashboardsp']); 

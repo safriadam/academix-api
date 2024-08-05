@@ -24,7 +24,7 @@ class DosenController extends Controller
             ], 200);
         } catch (\Throwable $th) {
             return response()->json([
-                "error" => $th->getMessage()
+                'error' => $th->getMessage()
             ], $th->getCode());
         }
     }
@@ -84,6 +84,8 @@ class DosenController extends Controller
         }
     }
 
+
+    //masih bingung ini $konfirmMahasiswa digunakan untuk apa
     public function tolakSurat(Request $request, $konfirmMahasiswa)
     {
         $nidn = $request->query('nomor_induk');

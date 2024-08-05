@@ -14,7 +14,7 @@ class Admin extends Model
     public $timestamps = false;
 
    // menghubungkan nama tabel dengan model
-    protected $table = 'admin';
+    protected $table = 'admins';
 
     // menentukan primary key pada kolom tabel
     protected $primaryKey = 'id_staff';
