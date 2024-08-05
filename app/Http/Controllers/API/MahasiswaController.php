@@ -30,6 +30,32 @@ class MahasiswaController extends Controller
             ], $th->getCode());
         }
     }
+    public function checkTokenValid(Request $request)
+    {
+        $token = $request->token;
+        $id_jdwl = $request->query('id_jdwl');
+        try {
+            $valid = DB::table('jadwals')->where('id_jdwl',$id_jdwl)->first();
+            //tambahkan expired_at
+            if($valid==$token){
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'Token Valid'
+                ], 200);
+            }else{
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'Token Tidak Valid'
+                ], 200);
+            }
+        
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                "error" => $th->getMessage()
+            ], $th->getCode());
+        }
+    }
     public function daftarKetidakhadiranMhs(Request $request)
     {
         // $nim = $request->query('nomor_induk');

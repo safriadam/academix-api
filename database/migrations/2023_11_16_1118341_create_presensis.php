@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('presensis', function (Blueprint $table) {
             $table->unsignedBigInteger('id_presensi')->autoIncrement();
             $table->foreignId('id_mhs')->references('id_mhs')->on('mahasiswas')->onDelete('cascade');
+            $table->foreignId('id_jdwl')->references('id_jdwl')->on('jadwals')->onDelete('cascade');
             $table->unsignedBigInteger('id_tahun_ajar');
             $table->date('tgl');
             $table->time('start_kls');
