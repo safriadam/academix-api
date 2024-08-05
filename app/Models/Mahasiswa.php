@@ -17,10 +17,10 @@ class Mahasiswa extends Model
     use HasFactory;
 
         // nonaktifkan timestamp karna di tabel tidak memakai kolom 'created_at' & 'updated_at'
-        public $timestamps = false;
+        // public $timestamps = false;
 
         // menghubungkan nama tabel dengan model
-        protected $table = 'mahasiswa';
+        protected $table = 'mahasiswas';
     
         // menentukan primary key pada kolom tabel
         protected $primaryKey = 'id_mahasiswa';
@@ -43,6 +43,8 @@ class Mahasiswa extends Model
             'foto',
             'no_hp',
             'ket_status',
+            'created_at',
+            'updated_at'
         ];
     
         // menentukan relasi tabel 
@@ -63,11 +65,11 @@ class Mahasiswa extends Model
 
         public function kelas()
         {
-            return $this->hasMany(Kelas::class,'id_kelas','id_kelas');
+            return $this->hasMany(Kelas::class,'id_kls','id_kls');
         }
 
         public function presensi()
         {
-            return $this->hansOne(Presensi::class,'id_mahasiswa','id_mahasiswa');
+            return $this->hansOne(Presensi::class,'id_mhs','id_mahasiswa');
         }
 }

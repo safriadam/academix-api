@@ -131,6 +131,7 @@ class MahasiswaController extends Controller
         $sts = $request->status;
         $alamatsurat = $request->surat;
         $keterangan = $request->keterangan;
+        $id_presensi = $request->id_presensi;
         // try {
         $kirimKetidakhadiran = DB::table('mahasiswas')
             ->join('kelas', 'mahasiswas.id_kls', '=', 'kelas.id_kls')
@@ -146,8 +147,10 @@ class MahasiswaController extends Controller
             $insertKetidakHadiran = DB::table('ket_mhs')
                 ->insert([
                     'ket_mhs.status_confirm' => 0,
+                    'ket_mhs.id_presensi' => $id_presensi,
                     'ket_mhs.surat_bukti' => $alamatsurat,
                     'ket_mhs.deskripsi' => $keterangan,
+                    'ket_mhs.limit_surat' => now(), //masih bug, harusnya tidak now()
                     'created_at' => now(),
                     'updated_at' => now()
                 ]);

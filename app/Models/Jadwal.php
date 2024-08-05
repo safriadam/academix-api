@@ -13,13 +13,13 @@ class Jadwal extends Model
     use HasFactory;
 
      // nonaktifkan timestamp karna di tabel tidak memakai kolom 'created_at' & 'updated_at'
-     public $timestamps = false;
+    //  public $timestamps = false;
 
      // menghubungkan nama tabel dengan model
-     protected $table = 'jadwal';
+     protected $table = 'jadwals';
  
      // menentukan primary key pada kolom tabel
-     protected $primaryKey = 'id_jadwal';
+     protected $primaryKey = 'id_jdwl';
  
      // menentukan apakah primary key auto increment pada tabel
      public $incrementing = false;
@@ -38,16 +38,18 @@ class Jadwal extends Model
          'finish',
          'jumlah_jam',
          'token',
+         'created_at',
+         'updated_at'
      ];
 
      // menentukan relasi tabel 
     public function matkul()
     {
-        return $this->belongsTo(Matkul::class, 'id_matkul', 'id_matkul');
+        return $this->belongsTo(Matkul::class, 'id_mk', 'id_mk');
     }
 
     public function berita_acara()
     {
-        return $this->hasOne(Berita_acara::class, 'id_jadwal', 'id_jadwal');
+        return $this->hasOne(Berita_acara::class, 'id_jdwl', 'id_jdwl');
     }
 }

@@ -15,7 +15,7 @@ class Presensi extends Model
 {
     use HasFactory;
 
-    protected $table = 'presensi';
+    protected $table = 'presensis';
 
     protected $primaryKey = 'id_presensi';
 

@@ -17,7 +17,7 @@ class Kompen_mahasiswa extends Model
     public $timestamps = false;
 
     // menghubungkan nama tabel dengan model
-    protected $table = 'kompen_mahasiswa';
+    protected $table = 'kompen_mhs';
 
     // menentukan primary key pada kolom tabel
     protected $primaryKey = 'id_kompen';
