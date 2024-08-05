@@ -12,11 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('kompen_mhs', function (Blueprint $table) {
-            $table->unsignedBigInteger('id_mhs');
+            $table->unsignedBigInteger('id_kompen');
+            $table->foreignId('id_mhs')->references('id_mhs')->on('mahasiswas')->onDelete('cascade');
+            $table->foreignId('id_mk')->references('id_mk')->on('matkuls')->onDelete('cascade');
+            $table->foreignId('id_tahun_ajar')->references('id')->on('kaldiks')->onDelete('cascade');
             $table->unsignedBigInteger('id_staff');
             $table->integer('jumlah_kompen');
             $table->string('keterangan');
-            $table->date('tgl_kompen');
+            $table->date('tgl_alpha');
             $table->timestamps();
         });
     }
