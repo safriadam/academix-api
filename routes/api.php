@@ -39,6 +39,9 @@ Route::post("/logout", LogoutController::class)->name("logout");
 
 //Admin
 Route::get("/Dashboard-Admin", AdminController::class);
+    // Jadwal - Admin
+Route::get("/Dashboard-Jadwal", [JadwalController::class, 'DashboardJadwal']);
+Route::post("/Simpan-Jadwal-Baru", [JadwalController::class, 'SimpanJadwal']);
 
 //Dosen / Kaprodi
 Route::get("/Dashboard-Dosen-Profil", [DosenController::class, 'profilDosen']);
@@ -59,7 +62,12 @@ Route::get("/Dashboard-Kirim-Surat", [MahasiswaController::class, 'kirimSuratKet
 Route::post("/Kelas-Validasi-Token", [MahasiswaController::class, 'checkTokenValid']);
 Route::get("/Kelas-Mahasiswa", [KelasController::class, 'kelasSaatIniMahasiswa']);
 //Jadwal
-Route::get("/Dashboard-Mahasiswa-Jadwal-Harini", [MahasiswaController::class, 'jadwalHariIniMhs']);
+Route::get("/Dashboard-Mahasiswa-Jadwal-Harini", [JadwalController::class, 'jadwalHariIniMhs']);
+
+
+
+//Manajemen Kelas
+Route::get("/Dashboard-Kelas", [KelasController::class, 'dashboardKelas']);
 
 //Kaldik
 Route::get("/Dashboard-Kaldik", [KaldikController::class, 'dashboardKaldik']);

@@ -30,8 +30,8 @@ class Jadwal extends Model
      // menentukan kolom kolom lain pada tabel (yang bukan primary key)
      protected $fillable = [
          'id_jadwal',
-         'id_kelas',
-         'id_matkul',
+         'id_kls',
+         'id_mk',
          'ruang',
          'hari',
          'start',

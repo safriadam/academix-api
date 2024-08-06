@@ -14,6 +14,21 @@ use Carbon\Carbon;
 class KelasController extends Controller
 {
 
+    public function dashboardKelas(){
+        // $nidn = $request->query('nomor_induk');
+        try {
+            $kelas_all = DB::table('kelas')
+                ->get();
+            return response()->json([
+                'status' => 200,
+                "kelas_all" => $kelas_all
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                "error" => $th->getMessage()
+            ], $th->getCode());
+        }
+    }
     // ----------------------------------------------------------------DOSEN-----------------------------------------------------------------------------
     public function dataKelasDosen(Request $request)
     {
