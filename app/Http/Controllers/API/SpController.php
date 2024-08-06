@@ -21,8 +21,6 @@ class SpController extends Controller
             return response()->json([
                 "error" => $th->getMessage()
             ], $th->getCode());
-        
-
     }
 
     }
