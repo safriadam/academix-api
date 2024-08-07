@@ -19,7 +19,7 @@ class Kelas extends Model
     protected $table = 'kelas';
 
     // menentukan primary key pada kolom tabel
-    protected $primaryKey = 'id_kelas';
+    protected $primaryKey = 'id_kls';
 
     // menentukan apakah primary key auto icrement pada tabel
     public $incrementing = true;

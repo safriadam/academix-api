@@ -482,7 +482,88 @@ class KelasController extends Controller
             ], 404);
         }
     }
-    public function updateTablePresensi()
+
+    public function updatetableKelas(Request $request, $id_kls)
     {
+        // Validate the request
+        $request->validate([
+            'abjad_kls' => 'string',
+            'smt' => 'integer',
+        ]);
+    
+        try {
+            // Log request data
+            Log::info('Request data: ', $request->all());
+            Log::info('Updating class with ID: ' . $id_kls);
+    
+            // Find the class by ID
+            $kelas = Kelas::findOrFail($id_kls);
+    
+            // Log the found class data
+            Log::info('Class found: ', $kelas->toArray());
+    
+            // Update the class with new data
+            $kelas->update($request->only(['abjad_kls', 'smt'])); // Update only the specified fields
+    
+            // Log the updated class data
+            Log::info('Class updated successfully: ', $kelas->toArray());
+    
+            // Return success response
+            return response()->json([
+                'message' => 'Berhasil memperbarui kelas',
+                'data' => $kelas,
+            ], 200);
+        } catch (\Exception $e) {
+            // Log the error
+            Log::error('Error updating class: ' . $e->getMessage());
+    
+            // Return error response
+            return response()->json([
+                'message' => 'Tidak berhasil memperbarui kelas',
+            ], 500);
+        }
+    }
+    
+    public function createtableKelas(Request $request)
+    {
+        $request->validate([
+            'abjad_kls' => 'required|string',
+            'smt' => 'required|integer',
+        ]);
+    
+        try {
+            $kelas = Kelas::create($request->all());
+    
+            return response()->json([
+                'message' => 'Berhasil menambahkan kelas',
+                'data' => $kelas,
+            ], 201);
+        } catch (\Exception $e) {
+            // Log the error for debugging purposes
+            Log::error('Error creating class: ' . $e->getMessage());
+    
+            return response()->json([
+                'message' => 'Tidak berhasil menambahkan kelas',
+            ], 500);
+        }
+    }
+    
+    public function deletetableKelas($id_kls)
+    {
+        try {
+            $kelas = Kelas::where('id_kls', $id_kls)->firstOrFail();
+            $kelas->delete();
+    
+            return response()->json([
+                'message' => 'Berhasil menghapus kelas',
+            ], 200);
+        } catch (\Exception $e) {
+            // Log the error for debugging purposes
+            Log::error('Error deleting class: ' . $e->getMessage());
+    
+            return response()->json([
+                'message' => 'Tidak berhasil menghapus kelas',
+            ], 500);
+        }
     }
 }
