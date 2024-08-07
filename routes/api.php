@@ -71,6 +71,9 @@ Route::get("/Dashboard-Kelas", [KelasController::class, 'dashboardKelas']);
 
 //Kaldik
 Route::get("/Dashboard-Kaldik", [KaldikController::class, 'dashboardKaldik']);
+Route::post("/Tambah-Kaldik", [KaldikController::class, 'tambahKaldik']);
+Route::patch('/Update-Kaldik', [KaldikController::class, 'updateKaldik']);
+Route::delete('/Delete-Kaldik', [KaldikController::class, 'deleteKaldik']);
 
 //Surat Peringatan
 Route::get('/Dashboard-sp',[SpController::class, 'Dashboardsp']); 
