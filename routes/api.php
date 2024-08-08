@@ -1,8 +1,8 @@
 <?php
 
-use App\Http\Controllers\Api\LoginController;
-use App\Http\Controllers\Api\LogoutController;
-use App\Http\Controllers\Api\RegisterController;
+use App\Http\Controllers\API\LoginController;
+use App\Http\Controllers\API\LogoutController;
+use App\Http\Controllers\API\RegisterController;
 use App\Http\Controllers\API\AdminController;
 use App\Http\Controllers\API\DosenController;
 use App\Http\Controllers\API\JadwalController;
