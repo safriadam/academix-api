@@ -10,6 +10,7 @@ use App\Http\Controllers\API\MahasiswaController;
 use App\Http\Controllers\API\KelasController;
 use App\Http\Controllers\API\PresensiController;
 use App\Http\Controllers\API\KaldikController;
+use App\Http\Controllers\API\KompenMahasiswaController;
 use App\Http\Controllers\API\SpController;
 use App\Models\Dosen;
 use App\Models\Mahasiswa;
@@ -85,3 +86,6 @@ Route::delete('/Delete-Kaldik', [KaldikController::class, 'deleteKaldik']);
 
 //Surat Peringatan
 Route::get('/Dashboard-sp',[SpController::class, 'Dashboardsp']); 
+
+//Kompensasi
+Route::get('/Dashboard-kompen',[KompenMahasiswaController::class,'DashboardKompen']);
