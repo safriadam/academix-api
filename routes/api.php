@@ -89,3 +89,12 @@ Route::get('/Dashboard-sp',[SpController::class, 'Dashboardsp']);
 
 //Kompensasi
 Route::get('/Dashboard-kompen',[KompenMahasiswaController::class,'DashboardKompen']);
+
+//Cicil Kompen
+Route::get('/Dashboard-cicil',[CicilKompenController::class, 'DashboardCicil']);
+Route::post("/Tambah-cicil", [CicilKompenController::class, 'tambahCicilKompen']);
+Route::patch('/Update-cicil', [CicilKompenController::class, 'updateCicilKompen']);
+Route::delete('/Delete-cicil', [CicilKompenController::class, 'deleteCicilKompen']);
+
+//revisi presensi
+Route::get('/Revisi-presensi',[RevisiPresensiController::class, 'DashboardRevisiPresensi']);
