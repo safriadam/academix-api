@@ -29,20 +29,20 @@ class Matkul extends Model
     
     // menentukan kolom kolom lain pada tabel (yang bukan primary key)
     protected $fillable = [
-        'kode_matkul',
-        'nama_matkul',
-        'semester',
-        'sks',
+        'kd_mk',
+        'nama',
+        'smt',
+        'sks'
     ];
 
      // menentukan relasi tabel 
      public function jadwal()
      {
-         return $this->hasOne(Jadwal::class, 'id_matkul', 'id_matkul');
+         return $this->hasOne(Jadwal::class, 'id_mk', 'id_mk');
      }
  
      public function berita_acara()
      {
-         return $this->hasOne(Berita_acara::class, 'id_jadwal', 'id_dosen');
+         return $this->hasOne(Berita_acara::class, 'id_jdwl', 'id_dosen');
      }
  }

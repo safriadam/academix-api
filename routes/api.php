@@ -12,6 +12,9 @@ use App\Http\Controllers\API\PresensiController;
 use App\Http\Controllers\API\KaldikController;
 use App\Http\Controllers\API\KompenMahasiswaController;
 use App\Http\Controllers\API\SpController;
+use App\Http\Controllers\API\CicilKompenController;
+use App\Http\Controllers\API\RevisiPresensiController;
+use App\Http\Controllers\API\BeritaAcaraController;
 use App\Models\Dosen;
 use App\Models\Mahasiswa;
 use Illuminate\Http\Request;
@@ -56,6 +59,7 @@ Route::get("/Kelas-Tutup-Kelas", [KelasController::class, 'tutupKelas']);
 Route::get("/Presensi-Dosen-Perminggu", [PresensiController::class, 'rekapPermingguDosen']);
 
 //Mahasiswa
+Route::get('/Dashboard-Mahasiswa/{id}', [MahasiswaController::class, 'DashboardMahasiswa']);
 Route::get("/Dashboard-Mahasiswa", [MahasiswaController::class,'profilMahasiswa']);
 Route::get("/Dashboard-Mahasiswa-Konfirmasi-Kehadiran-Anda", [MahasiswaController::class, 'daftarKetidakhadiranMhs']);
 Route::get("/Dashboard-Kirim-Surat", [MahasiswaController::class, 'kirimSuratKetidakhadiran']);
@@ -86,15 +90,25 @@ Route::delete('/Delete-Kaldik', [KaldikController::class, 'deleteKaldik']);
 
 //Surat Peringatan
 Route::get('/Dashboard-sp',[SpController::class, 'Dashboardsp']); 
+Route::get('/Detail-sp',[spController::class, 'DetailSp']); 
 
 //Kompensasi
 Route::get('/Dashboard-kompen',[KompenMahasiswaController::class,'DashboardKompen']);
+Route::get('/Profil-Kompen/{id}', [KompenMahasiswaController::class,'Profil_Kompen']);
+
 
 //Cicil Kompen
 Route::get('/Dashboard-cicil',[CicilKompenController::class, 'DashboardCicil']);
 Route::post("/Tambah-cicil", [CicilKompenController::class, 'tambahCicilKompen']);
 Route::patch('/Update-cicil', [CicilKompenController::class, 'updateCicilKompen']);
 Route::delete('/Delete-cicil', [CicilKompenController::class, 'deleteCicilKompen']);
+Route::get('/Laporan-cicil',[CicilKompenController::class, 'LaporanCicil']);
 
 //revisi presensi
-Route::get('/Revisi-presensi',[RevisiPresensiController::class, 'DashboardRevisiPresensi']);
+Route::get('/Dashboard-Revisi-Presensi', [RevisiPresensiController::class, 'DashboardRevisiPresensi'])->name('revisi-presensi.dashboard');
+Route::post('/upload-revisi-presensi', [RevisiPresensiController::class, 'uploadRevisiPresensi']);
+Route::post('/update-status-kehadiran/{id_presensi}', [RevisiPresensiController::class, 'updateStatusKehadiran']);
+Route::post('/add-deskripsi/{id_revisi}', [RevisiPresensiController::class, 'addDeskripsi']);
+
+//Berita Acara
+Route::get('/berita-acara-mahasiswa/{id}', [BeritaAcaraController::class, 'getMhsData']);

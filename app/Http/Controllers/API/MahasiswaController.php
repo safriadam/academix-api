@@ -14,6 +14,54 @@ use PhpParser\Node\Stmt\Catch_;
 
 class MahasiswaController extends Controller
 {
+    public function DashboardMahasiswa(String $id) {
+        try {
+
+            $id_mahasiswa = $id;
+
+            // Perform the database queries using $id_mahasiswa
+            $jumlahKehadiran = DB::table('presensi')
+                ->where('id_mahasiswa', $id_mahasiswa)
+                ->sum('kehadiran');
+        
+            $sakit = DB::table('presensi')
+                ->where('id_mahasiswa', $id_mahasiswa)
+                ->where('status', 'S')
+                ->count();
+        
+            $izin = DB::table('presensi')
+                ->where('id_mahasiswa', $id_mahasiswa)
+                ->where('status', 'I')
+                ->count();
+        
+            $alpha = DB::table('presensi')
+                ->where('id_mahasiswa', $id_mahasiswa)
+                ->where('status', 'A')
+                ->count();
+        
+            $jumlahKompensasi = DB::table('kompen_mahasiswa')
+                ->where('id_mahasiswa', $id_mahasiswa)
+                ->sum('jumlah_kompen');
+        
+            return response()->json([
+                'status' => 200,
+                'jumlah_kehadiran' => $jumlahKehadiran,
+                'sakit' => $sakit,
+                'izin' => $izin,
+                'alpha' => $alpha,
+                'jumlah_kompensasi' => $jumlahKompensasi,
+            ], 200);
+
+        } catch (\Throwable $th) {
+            // Default kode status HTTP untuk kesalahan server
+            $statusCode = is_int($th->getCode()) && $th->getCode() >= 100 && $th->getCode() <= 599 ? $th->getCode() : 500;
+
+            return response()->json([
+                "error" => $th->getMessage(),
+            ], $statusCode);
+        }
+    }
+    
     public function profilMahasiswa(Request $request)
     {
         $nim = $request->nomor_induk;

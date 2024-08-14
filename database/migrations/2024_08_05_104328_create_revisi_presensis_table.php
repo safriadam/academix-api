@@ -17,7 +17,9 @@ return new class extends Migration
             $table->date('tanggal_revisi');
             $table->enum('status',['diajukan','menunggu_verif','disetujui'])->nullable();
             $table->string('bukti_revisi');
+            $table->date('created_at')->nullable();
             $table->string('revisi');
+            $table->string('file_path')->nullable();
             $table->timestamps();
         });
     }
