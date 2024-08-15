@@ -112,8 +112,11 @@ Route::post('/add-deskripsi/{id_revisi}', [RevisiPresensiController::class, 'add
 
 //Berita Acara
 Route::get('/berita-acara-mahasiswa/{id}', [BeritaAcaraController::class, 'getMhsData']);
+<<<<<<< HEAD
 
 
 //Laporan
 Route::get("/Laporan-Mahasiswa", [LaporanController::class , 'LaporanMhs']);
 Route::get("/Laporan-MhsDosen", [LaporanController::class, 'LaporanMhsdosen']);
+=======
+>>>>>>> 8a82732985e0e7d179b755bf70c9970d7e19c6c3
