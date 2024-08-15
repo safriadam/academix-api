@@ -13,6 +13,7 @@ class Kompen_mahasiswa extends Model
 {
     use HasFactory;
 
+
     // nonaktifkan timestamp karena di tabel tidak memakai kolom 'create_at' & 'update_at
     public $timestamps = false;
 
@@ -58,4 +59,7 @@ class Kompen_mahasiswa extends Model
         return $this->belongsTo(Logs::class,'id_tahun_ajar','id_tahun_ajar');
     }
 
+    public function kompen_mhs(){
+        return $this->belongsTo(KompenMhs::class);
+    }
 }

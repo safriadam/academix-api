@@ -52,4 +52,13 @@ class Jadwal extends Model
     {
         return $this->hasOne(Berita_acara::class, 'id_jdwl', 'id_jdwl');
     }
+
+    public function presensis()
+    {
+        return $this->hasMany(Presensi::class, 'id_jdwl');
+    }
+
+    public function jadwal(){
+        return $this->belongsTo(Jadwal::class);
+    }
 }

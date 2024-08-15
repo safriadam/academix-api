@@ -67,7 +67,7 @@ Route::post("/Kelas-Validasi-Token", [MahasiswaController::class, 'checkTokenVal
 Route::get("/Kelas-Mahasiswa", [KelasController::class, 'kelasSaatIniMahasiswa']);
 
 //Jadwal
-Route::get("/Dashboard-Mahasiswa-Jadwal-Harini", [JadwalController::class, 'jadwalHariIniMhs']);
+Route::get("/Dashboard-Mahasiswa-Jadwal-Harini", [MahasiswaController::class, 'jadwalHariIniMhs']);
     //admin
 Route::get("/Dashboard-Jadwal", [JadwalController::class, 'dashboardJadwal']);
 Route::post("/Simpan-Jadwal", [JadwalController::class, 'simpanJadwal']);
@@ -112,3 +112,8 @@ Route::post('/add-deskripsi/{id_revisi}', [RevisiPresensiController::class, 'add
 
 //Berita Acara
 Route::get('/berita-acara-mahasiswa/{id}', [BeritaAcaraController::class, 'getMhsData']);
+
+
+//Laporan
+Route::get("/Laporan-Mahasiswa", [LaporanController::class , 'LaporanMhs']);
+Route::get("/Laporan-MhsDosen", [LaporanController::class, 'LaporanMhsdosen']);

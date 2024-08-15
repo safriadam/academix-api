@@ -41,7 +41,7 @@ class Logs extends Model
 
         public function presensi ()
         {
-            return $this->hasOne(Presensi::class, 'id_tahun_ajar', 'id_tahun_ajar');
+            return $this->hasMany(Presensi::class, 'id_tahun_ajar', 'id_tahun_ajar');
         }
 
         public function kompen_mahasiswa()
